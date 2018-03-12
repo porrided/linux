@@ -79,6 +79,10 @@
 #define ECHO_BLOCK		256
 #define ECHO_DISCARD_WATERMARK	N_TTY_BUF_SIZE - (ECHO_BLOCK + 32)
 
+#define SIG_FLUSHING_MASK ( \
+	rt_sigmask(SIGINT) | rt_sigmask(SIGQUIT) | \
+	rt_sigmask(SIGTSTP)			 )
+#define SIG_FLUSHING(sig) ((1 << sig) & SIG_FLUSHING_MASK)
 
 #undef N_TTY_TRACE
 #ifdef N_TTY_TRACE
@@ -1122,7 +1126,7 @@ static void isig(int sig, struct tty_struct *tty)
 {
 	struct n_tty_data *ldata = tty->disc_data;
 
-	if (L_NOFLSH(tty)) {
+	if (L_NOFLSH(tty) || (!SIG_FLUSHING(sig))) {
 		/* signal only */
 		__isig(sig, tty);
 
@@ -1244,7 +1248,8 @@ n_tty_receive_signal_char(struct tty_struct *tty, int signal, unsigned char c)
 	if (I_IXON(tty))
 		start_tty(tty);
 	if (L_ECHO(tty)) {
-		echo_char(c, tty);
+		if (c != STATUS_CHAR(tty))
+			echo_char(c, tty);
 		commit_echoes(tty);
 	} else
 		process_echoes(tty);
@@ -1293,6 +1298,9 @@ n_tty_receive_char_special(struct tty_struct *tty, unsigned char c)
 			return 0;
 		} else if (c == SUSP_CHAR(tty)) {
 			n_tty_receive_signal_char(tty, SIGTSTP, c);
+			return 0;
+		} else if (c == STATUS_CHAR(tty)) {
+			n_tty_receive_signal_char(tty, SIGINFO, c);
 			return 0;
 		}
 	}
@@ -1848,6 +1856,9 @@ static void n_tty_set_termios(struct tty_struct *tty, struct ktermios *old)
 			set_bit(INTR_CHAR(tty), ldata->char_map);
 			set_bit(QUIT_CHAR(tty), ldata->char_map);
 			set_bit(SUSP_CHAR(tty), ldata->char_map);
+			if (L_ICANON(tty) && L_IEXTEN(tty)) {
+				set_bit(STATUS_CHAR(tty), ldata->char_map);
+			}
 		}
 		clear_bit(__DISABLED_CHAR, ldata->char_map);
 		ldata->raw = 0;
