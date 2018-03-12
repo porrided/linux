@@ -78,6 +78,7 @@ struct ktermios {
 #define VLNEXT		15		/* Literal-next character [IEXTEN].  */
 #define VEOF		16		/* End-of-file character [ICANON].  */
 #define VEOL		17		/* End-of-line character [ICANON].  */
+#define VSTATUS		18		/* Status request character [ISIG]. */
 
 /* c_iflag bits */
 #define IGNBRK	0000001		/* Ignore break condition.  */

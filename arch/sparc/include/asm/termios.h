@@ -20,9 +20,9 @@
 	eof=^D		eol=\0		eol2=\0		sxtc=\0
 	start=^Q	stop=^S		susp=^Z		dsusp=^Y
 	reprint=^R	discard=^U	werase=^W	lnext=^V
-	vmin=\1         vtime=\0
+	vmin=\1		vtime=\0	status=^T
 */
-#define INIT_C_CC "\003\034\177\025\004\000\000\000\021\023\032\031\022\025\027\026\001"
+#define INIT_C_CC "\003\034\177\025\004\000\000\000\021\023\032\031\022\025\027\026\001\000\024"
 
 /*
  * Translate a "termio" structure into a "termios". Ugh.
