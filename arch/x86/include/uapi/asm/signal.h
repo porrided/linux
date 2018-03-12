@@ -55,6 +55,7 @@ typedef unsigned long sigset_t;
 #define SIGLOST		29
 */
 #define SIGPWR		30
+#define SIGINFO		SIGPWR
 #define SIGSYS		31
 #define	SIGUNUSED	31
 

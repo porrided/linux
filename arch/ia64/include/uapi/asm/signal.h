@@ -45,6 +45,7 @@
 #define SIGLOST		29
 */
 #define SIGPWR		30
+#define SIGINFO		SIGPWR
 #define SIGSYS		31
 /* signal 31 is no longer "unused", but the SIGUNUSED macro remains for backwards compatibility */
 #define	SIGUNUSED	31

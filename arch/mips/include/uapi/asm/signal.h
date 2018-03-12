@@ -43,6 +43,7 @@ typedef unsigned long old_sigset_t;		/* at least 32 bits */
 #define SIGCHLD		18	/* Child status has changed (POSIX).  */
 #define SIGCLD		SIGCHLD /* Same as SIGCHLD (System V).	*/
 #define SIGPWR		19	/* Power failure restart (System V).  */
+#define SIGINFO		SIGPWR	/* Keyboard status request (4.2 BSD). */
 #define SIGWINCH	20	/* Window size change (4.3 BSD, Sun).  */
 #define SIGURG		21	/* Urgent condition on socket (4.2 BSD).  */
 #define SIGIO		22	/* I/O now possible (4.2 BSD).	*/

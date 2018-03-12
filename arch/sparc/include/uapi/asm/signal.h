@@ -71,6 +71,8 @@
 #define SIGWINCH	28
 #define SIGLOST		29
 #define SIGPWR		SIGLOST
+/* XXX: is it OK for SIGINFO to collide with LOST? */
+#define SIGINFO		SIGPWR
 #define SIGUSR1		30
 #define SIGUSR2		31
 

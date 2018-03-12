@@ -22,6 +22,7 @@
 #define SIGUSR2		17
 #define SIGCHLD		18
 #define SIGPWR		19
+#define SIGINFO		SIGPWR
 #define SIGVTALRM	20
 #define SIGPROF		21
 #define SIGIO		22
