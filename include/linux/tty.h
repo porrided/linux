@@ -725,6 +725,9 @@ extern void __init n_tty_init(void);
 static inline void n_tty_init(void) { }
 #endif
 
+/* n_tty_status.c */
+extern void tty_sprint_status_line(struct tty_struct *tty, char *msg, size_t size);
+
 /* tty_audit.c */
 #ifdef CONFIG_AUDIT
 extern void tty_audit_add_data(struct tty_struct *tty, const void *data,

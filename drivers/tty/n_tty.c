@@ -34,6 +34,7 @@
 #include <linux/signal.h>
 #include <linux/fcntl.h>
 #include <linux/sched.h>
+#include <linux/kallsyms.h>
 #include <linux/interrupt.h>
 #include <linux/tty.h>
 #include <linux/timer.h>
@@ -78,6 +79,8 @@
 #define ECHO_COMMIT_WATERMARK	256
 #define ECHO_BLOCK		256
 #define ECHO_DISCARD_WATERMARK	N_TTY_BUF_SIZE - (ECHO_BLOCK + 32)
+
+#define STATUS_LINE_LEN (2 * KSYM_NAME_LEN)
 
 #define SIG_FLUSHING_MASK ( \
 	rt_sigmask(SIGINT) | rt_sigmask(SIGQUIT) | \
@@ -157,6 +160,8 @@ static inline unsigned char *echo_buf_addr(struct n_tty_data *ldata, size_t i)
 {
 	return &ldata->echo_buf[i & (N_TTY_BUF_SIZE - 1)];
 }
+
+static void n_tty_status_line(struct tty_struct *tty);
 
 /* If we are not echoing the data, perhaps this is a secret so erase it */
 static void zero_buffer(struct tty_struct *tty, u8 *buffer, int size)
@@ -1300,6 +1305,8 @@ n_tty_receive_char_special(struct tty_struct *tty, unsigned char c)
 			n_tty_receive_signal_char(tty, SIGTSTP, c);
 			return 0;
 		} else if (c == STATUS_CHAR(tty)) {
+			if (!L_NOKERNINFO(tty))
+				n_tty_status_line(tty);
 			n_tty_receive_signal_char(tty, SIGINFO, c);
 			return 0;
 		}
@@ -2487,6 +2494,20 @@ static int n_tty_ioctl(struct tty_struct *tty, struct file *file,
 	default:
 		return n_tty_ioctl_helper(tty, file, cmd, arg);
 	}
+}
+
+static void n_tty_status_line(struct tty_struct *tty)
+{
+	struct n_tty_data *ldata = tty->disc_data;
+	char *msg, *buf;
+	msg = buf = kzalloc(STATUS_LINE_LEN, GFP_KERNEL);
+	tty_sprint_status_line(tty, buf + 1, STATUS_LINE_LEN - 1);
+	if (ldata->column != 0)
+		*msg = '\n';
+	else
+		msg++;
+	do_n_tty_write(tty, NULL, msg, strlen(msg));
+	kfree(buf);
 }
 
 static struct tty_ldisc_ops n_tty_ops = {
