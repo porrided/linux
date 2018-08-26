@@ -225,6 +225,7 @@ struct ktermios {
 #define PENDIN	0x00004000
 #define IEXTEN	0x00008000
 #define EXTPROC	0x00010000
+#define NOKERNINFO	0x00020000
 
 /* modem lines */
 #define TIOCM_LE	0x001

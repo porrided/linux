@@ -186,6 +186,7 @@ struct tty_bufhead {
 #define L_PENDIN(tty)	_L_FLAG((tty), PENDIN)
 #define L_IEXTEN(tty)	_L_FLAG((tty), IEXTEN)
 #define L_EXTPROC(tty)	_L_FLAG((tty), EXTPROC)
+#define L_NOKERNINFO(tty)	_L_FLAG((tty), NOKERNINFO)
 
 struct device;
 struct signal_struct;
